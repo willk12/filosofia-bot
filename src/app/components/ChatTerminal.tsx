@@ -5,7 +5,8 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Skeleton } from "primereact/skeleton";
 import ReactMarkdown from "react-markdown";
-import { Span } from "next/dist/trace";
+import { env } from "node:process";
+
 
 type Message = {
   text: string;
@@ -49,8 +50,8 @@ export default function ChatTerminal() {
           method: "POST",
           headers: {
             Authorization:
-              "Bearer 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",
-            "Content-Type": "application/json",
+              `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+              "Content-Type": "application/json",
           },
           body: JSON.stringify({
             model: "z-ai/glm-4.5-air:free",
