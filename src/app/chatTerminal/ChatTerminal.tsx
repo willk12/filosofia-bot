@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { Skeleton } from "primereact/skeleton";
 import ReactMarkdown from "react-markdown";
 import { env } from "node:process";
+import { useSearchParams } from "next/navigation";
 
 
 type Message = {
@@ -17,6 +18,8 @@ type Message = {
 export default function ChatTerminal() {
   const [textChat, setTextChat] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const searchParams = useSearchParams();
+  const initialMessage = searchParams.get("message") || "";
 
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);

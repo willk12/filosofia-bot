@@ -1,11 +1,11 @@
 
 
-import HomeChat from './components/HomeChat';
+import ChatTerminal from "./ChatTerminal";
 
 export default function Home() {
   return (
     <div className="w-full h-full">
-        <HomeChat/>
+        <ChatTerminal/>
     </div>
   );
 }
