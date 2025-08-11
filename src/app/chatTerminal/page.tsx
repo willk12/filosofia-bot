@@ -1,11 +1,14 @@
 
 
 import ChatTerminal from "./ChatTerminal";
+import { Suspense } from "react";
 
-export default function Home() {
+export default function Page() {
   return (
     <div className="w-full h-full flex items-center justify-center">
-        <ChatTerminal/>
+      <Suspense fallback={<div>Carregando...</div>}>
+      <ChatTerminal />
+    </Suspense>
     </div>
   );
 }
