@@ -5,9 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Skeleton } from "primereact/skeleton";
 import ReactMarkdown from "react-markdown";
-import { env } from "node:process";
 import { useSearchParams } from "next/navigation";
-
 
 type Message = {
   text: string;
@@ -29,10 +27,20 @@ export default function ChatTerminal() {
     return () => clearTimeout(timeout);
   }, []);
 
-  async function clickHandler() {
-    if (!textChat.trim() || sending) return;
+  // useEffect para enviar mensagem inicial assim que carregar a página
+  useEffect(() => {
+    if (initialMessage) {
+      // Ajusta o estado do input só por garantia (opcional)
+      setTextChat(initialMessage);
+      // Chama a função para enviar essa mensagem para a API
+      sendMessage(initialMessage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialMessage]);
 
-    const userMessage = textChat;
+  async function sendMessage(messageToSend: string) {
+    if (!messageToSend.trim() || sending) return;
+
     setTextChat("");
     setSending(true);
 
@@ -40,7 +48,7 @@ export default function ChatTerminal() {
     setMessages((prev) => [
       ...prev,
       {
-        text: userMessage,
+        text: messageToSend,
         timestamp: new Date().toLocaleString(),
         sender: "user",
       },
@@ -54,7 +62,7 @@ export default function ChatTerminal() {
           headers: {
             Authorization:
               `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
-              "Content-Type": "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             model: "z-ai/glm-4.5-air:free",
@@ -66,7 +74,7 @@ export default function ChatTerminal() {
               },
               {
                 role: "user",
-                content: userMessage,
+                content: messageToSend,
               },
             ],
           }),
@@ -101,6 +109,11 @@ export default function ChatTerminal() {
     }
   }
 
+  // Altera a chamada do clickHandler para usar sendMessage
+  function clickHandler() {
+    sendMessage(textChat);
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       clickHandler();
@@ -127,8 +140,8 @@ export default function ChatTerminal() {
               <ReactMarkdown>{msg.text}</ReactMarkdown>
             </div>
             <span className="text-xs text-gray-400">{msg.timestamp}</span>
-          {msg.sender !== "user" && <span>by Luiz Pondé</span>}
-          {msg.sender === "user" && <span>by Você</span>}
+            {msg.sender !== "user" && <span>by Luiz Pondé</span>}
+            {msg.sender === "user" && <span>by Você</span>}
           </div>
         ))}
 
@@ -161,6 +174,7 @@ export default function ChatTerminal() {
               icon="pi pi-send"
               className="p-button-warning"
               onClick={clickHandler}
+              disabled={sending}
             />
           </>
         )}
