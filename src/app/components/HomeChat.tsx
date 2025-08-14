@@ -6,7 +6,6 @@ import { Skeleton } from "primereact/skeleton";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-
 export default function HomeChat() {
   const [loading, setLoading] = useState(true);
   const [textChat, setTextChat] = useState("");
@@ -20,7 +19,12 @@ export default function HomeChat() {
   function handleInputChange() {
     if (textChat.trim() === "") return;
     router.push(`/chatTerminal?message=${encodeURIComponent(textChat)}`);
- 
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter") {
+      handleInputChange();
+    }
   }
 
   return (
@@ -38,7 +42,13 @@ export default function HomeChat() {
             <Skeleton height="3rem" width="100%" className="rounded-lg" />
           ) : (
             <>
-              <InputText placeholder="Digite sua mensagem" value={textChat} onChange={(e) => setTextChat(e.target.value)} className="" />
+              <InputText
+                placeholder="Digite sua mensagem"
+                value={textChat}
+                onChange={(e) => setTextChat(e.target.value)}
+                className=""
+                onKeyDown={handleKeyDown}
+              />
               <Button
                 icon="pi pi-send"
                 className="p-button-success bg-black "
